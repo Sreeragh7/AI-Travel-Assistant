@@ -1,0 +1,8 @@
+Flask
+xhtml2pdf
+requests
+beautifulsoup4
+fake-useragent
+wikipedia
+langchain
+huggingface_hub 
