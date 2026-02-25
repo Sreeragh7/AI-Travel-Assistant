@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Travel Itinerary Assistant</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Custom Styles -->
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --background-light: #f8f9fa;
+            --text-dark: #2c3e50;
+        }
+        
+
+        body {
+            background-color: var(--background-light);
+            color: var(--text-dark);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, var(--primary-color), #3498db);
+            color: white;
+            padding: 3rem 2rem;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .search-form {
+            background: white;
+            padding: 2rem;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-control:focus {
+            box-shadow: 0 0 0 0.2rem rgba(74, 144, 226, 0.25);
+            border-color: var(--primary-color);
+        }
+
+        .btn-primary {
+            background-color: var(--primary-color);
+            border-color: var(--primary-color);
+            padding: 0.75rem 2rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+        }
+
+        .place-card {
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border: none;
+            overflow: hidden;
+            border-radius: 10px;
+        }
+
+        .place-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .place-card img {
+            height: 200px;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+
+        .place-card:hover img {
+            transform: scale(1.05);
+        }
+
+        .card-body {
+            padding: 1.5rem;
+        }
+
+        .card-title {
+            color: var(--secondary-color);
+            font-weight: 600;
+        }
+
+        .card-text {
+            color: #666;
+            line-height: 1.5;
+        }
+
+        .accordion-button:not(.collapsed) {
+            background-color: var(--background-light);
+            color: var(--secondary-color);
+        }
+
+        .accordion-button::after {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%232c3e50'%3e%3cpath fill-rule='evenodd' d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3e%3c/svg%3e");
+        }
+
+        .accordion-button:not(.collapsed)::after {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16' fill='%232c3e50'%3e%3cpath fill-rule='evenodd' d='M1 8a.5.5 0 0 1 .5-.5h13a.5.5 0 0 1 0 1h-13A.5.5 0 0 1 1 8z'/%3e%3c/svg%3e");
+        }
+
+        .btn-success, .btn-info {
+            margin-right: 1rem;
+            padding: 0.75rem 2rem;
+            border-radius: 25px;
+            transition: all 0.3s ease;
+        }
+
+        .btn-success:hover, .btn-info:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .search-form {
+                padding: 1.5rem;
+            }
+        }
+
+        /* Chatbot Widget */
+        #chatbot-widget {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        #chatbot-toggle {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 50%;
+            width: 56px;
+            height: 56px;
+            font-size: 28px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.18);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+        #chatbot-toggle:hover {
+            transform: rotate(10deg);
+        }
+        #chatbot-window {
+            position: fixed;
+            bottom: 80px;
+            right: 20px;
+            width: 340px;
+            max-height: 500px;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 16px rgba(0,0,0,0.18);
+            overflow: hidden;
+            flex-direction: column;
+            display: none;
+            z-index: 1001;
+        }
+        #chatbot-header {
+            background: #007bff;
+            color: #fff;
+            padding: 12px;
+            font-weight: bold;
+            text-align: center;
+            cursor: pointer;
+        }
+        #chatbot-header:hover {
+            background: #0056b3;
+        }
+        #chatbot-messages {
+            flex: 1;
+            padding: 12px;
+            overflow-y: auto;
+            background: #f8f9fa;
+        }
+        #chatbot-input-row {
+            display: flex;
+            border-top: 1px solid #eee;
+            padding: 12px;
+        }
+        #chatbot-input {
+            flex: 1;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            padding: 8px 12px;
+            outline: none;
+            margin-right: 8px;
+        }
+        #chatbot-input:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 0 3px rgba(0,123,255,.25);
+        }
+        #chatbot-send {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 20px;
+            padding: 8px 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        #chatbot-send:hover {
+            background: #0056b3;
+        }
+    </style>
+</head>
+<body>
+{% if itinerary %}
+<script>
+  var itineraryData = {{ itinerary|tojson }};
+</script>
+{% else %}
+<script>
+  var itineraryData = null;
+</script>
+{% endif %}
+<div class="main-container">
+    <div class="hero-section">
+        <h1>Travel Itinerary Assistant</h1>
+        <p class="lead mb-0">Plan your perfect trip with our intelligent itinerary generator</p>
+    </div>
+    <form method="POST" class="row g-3 justify-content-center">
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="starting_city" placeholder="Starting City" required>
+        </div>
+        <div class="col-md-3">
+            <input type="text" class="form-control" name="destination" placeholder="Destination" required>
+        </div>
+        <div class="col-md-2">
+            <input type="number" class="form-control" name="days" placeholder="Days" min="1" required>
+        </div>
+        <div class="col-md-3">
+            <input type="number" class="form-control" name="budget" placeholder="Budget (INR)" min="1" required>
+        </div>
+        <div class="col-md-1 d-grid">
+            <button type="submit" class="btn btn-primary">Generate</button>
+        </div>
+    </form>
+    {% if itinerary %}
+    <div class="mb-3">
+        <form method="POST" action="/download_pdf" style="display:inline;">
+            <input type="hidden" name="starting_city" value="{{ starting_city }}">
+            <input type="hidden" name="destination" value="{{ destination }}">
+            <input type="hidden" name="days" value="{{ days }}">
+            <button type="submit" class="btn btn-success">
+                <i class="fas fa-download me-2"></i>Download PDF
+            </button>
+        </form>
+    </div>
+    <div class="mb-4 p-3 bg-light rounded shadow-sm">
+        <h4 class="mb-2 text-primary"><i class="fas fa-route me-2"></i>Travel to {{ destination }}</h4>
+        <div><b>Mode:</b> {{ travel_info.mode|capitalize }} | <b>Distance:</b> {{ travel_info.distance_km }} km | <b>Estimated Time:</b> {{ travel_info.duration_min }} min</div>
+    </div>
+    {% for day in itinerary %}
+    <div class="accordion mb-4" id="itineraryAccordion{{ day.day }}">
+        <div class="accordion-item">
+            <h2 class="accordion-header" id="heading{{ day.day }}">
+                <button class="accordion-button {% if not loop.first %}collapsed{% endif %}" type="button" data-bs-toggle="collapse" data-bs-target="#collapse{{ day.day }}" aria-expanded="{{ 'true' if loop.first else 'false' }}" aria-controls="collapse{{ day.day }}">
+                    Day {{ day.day }}
+                </button>
+            </h2>
+            <div id="collapse{{ day.day }}" class="accordion-collapse collapse {% if loop.first %}show{% endif %}" aria-labelledby="heading{{ day.day }}" data-bs-parent="#itineraryAccordion{{ day.day }}">
+                <div class="accordion-body">
+                    <div class="timeline">
+                        {% for step in day.steps %}
+                        <div class="timeline-step mb-4">
+                            <div class="row align-items-center">
+                                <div class="col-md-2 text-center">
+                                    {% if step.type == 'hotel' %}
+                                        <i class="fas fa-hotel fa-2x text-secondary"></i>
+                                    {% elif step.type == 'breakfast' %}
+                                        <i class="fas fa-coffee fa-2x text-primary"></i>
+                                    {% elif step.type == 'lunch' %}
+                                        <i class="fas fa-utensils fa-2x text-success"></i>
+                                    {% elif step.type == 'dinner' %}
+                                        <i class="fas fa-hamburger fa-2x text-danger"></i>
+                                    {% elif step.type == 'attraction' %}
+                                        <i class="fas fa-map-marker-alt fa-2x text-info"></i>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-4">
+                                    <div class="card place-card shadow-sm mb-0">
+                                        <img src="{{ step.place.image_url }}" class="card-img-top" alt="{{ step.place.name }}">
+                                        <div class="card-body">
+                                            <h5 class="card-title">{{ step.place.name }}</h5>
+                                            <div class="card-text small"><span class="badge bg-warning text-dark"><i class="fas fa-star"></i> {{ step.place.rating }}</span></div>
+                                            {% if step.note %}<div class="small text-muted mt-1">{{ step.note }}</div>{% endif %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    {% if step.route %}
+                                    <div class="p-2 bg-light rounded border">
+                                        <b>Travel:</b> {{ step.route.mode|capitalize }}<br>
+                                        <b>Distance:</b> {{ step.route.distance_km }} km<br>
+                                        <b>Estimated Time:</b> {{ step.route.duration_min }} min
+                                    </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+</div>
+<!-- Chatbot Widget -->
+<div id="chatbot-widget">
+    <button id="chatbot-toggle">💬</button>
+    <div id="chatbot-window" class="d-flex flex-column">
+        <div id="chatbot-header">Travel Chatbot</div>
+        <div id="chatbot-messages"></div>
+        <div id="chatbot-input-row">
+            <input id="chatbot-input" type="text" placeholder="Ask about your itinerary..." />
+            <button id="chatbot-send">Send</button>
+        </div>
+    </div>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const toggleBtn = document.getElementById('chatbot-toggle');
+const chatWindow = document.getElementById('chatbot-window');
+const chatHeader = document.getElementById('chatbot-header');
+const sendBtn = document.getElementById('chatbot-send');
+const input = document.getElementById('chatbot-input');
+const messages = document.getElementById('chatbot-messages');
+
+// Only show chat window when button is clicked
+toggleBtn.onclick = () => {
+    chatWindow.style.display = 'flex';
+};
+
+// Hide chat window when clicking header
+chatHeader.onclick = () => {
+    chatWindow.style.display = 'none';
+};
+
+function appendMessage(text, sender) {
+    const msg = document.createElement('div');
+    msg.className = sender === 'user' ? 'text-end mb-2' : 'text-start mb-2';
+    msg.innerHTML = `<span class='badge bg-${sender === 'user' ? 'primary' : 'secondary'}'>${text}</span>`;
+    messages.appendChild(msg);
+    messages.scrollTop = messages.scrollHeight;
+}
+
+sendBtn.onclick = async () => {
+    const text = input.value.trim();
+    if (!text) return;
+    appendMessage(text, 'user');
+    input.value = '';
+    appendMessage('...', 'bot');
+    const body = {message: text};
+    if (itineraryData) body.itinerary = itineraryData;
+    const res = await fetch('/chat', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify(body)
+    });
+    const data = await res.json();
+    messages.lastChild.remove();
+    appendMessage(data.response, 'bot');
+};
+
+input.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') sendBtn.click();
+});
+
+// Close chat window when clicking outside
+document.addEventListener('click', (e) => {
+    if (!chatWindow.contains(e.target) && !toggleBtn.contains(e.target)) {
+        chatWindow.style.display = 'none';
+    }
+});
+</script>
+</body>
+</html> 
