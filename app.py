@@ -16,7 +16,7 @@ app = Flask(__name__)
 scraper = TravelDataScraper()
 
 # Initialize LangChain LLM with Hugging Face Hub (Mistral-7B-Instruct)
-hf_api_key = "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"
+hf_api_key = "Add the key"
 llm = HuggingFaceHub(
     repo_id="mistralai/Mistral-7B-Instruct-v0.2",
     huggingfacehub_api_token=hf_api_key
@@ -102,4 +102,5 @@ def map_view():
     return render_template('map.html', destination=destination, places=places)
 
 if __name__ == '__main__':
+
     app.run(debug=True)
