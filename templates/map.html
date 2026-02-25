@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Map - {{ destination }}</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
+    <style>
+        #map { height: 80vh; width: 100%; margin-top: 20px; }
+    </style>
+</head>
+
+<body>
+<div class="container">
+    <h2>Map for {{ destination }}</h2>
+    <div id="map"></div>
+    <a href="/" class="btn btn-secondary mt-3">Back</a>
+</div>
+<script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script src="https://unpkg.com/leaflet-search/dist/leaflet-search.src.js"></script>
+<script>
+    // Default to world center if no places
+    var map = L.map('map').setView([20, 0], 2);
+    // Try to geocode the destination
+    fetch('https://nominatim.openstreetmap.org/search?format=json&q={{ destination|urlencode }}')
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.length > 0) {
+                var lat = parseFloat(data[0].lat);
+                var lon = parseFloat(data[0].lon);
+                map.setView([lat, lon], 12);
+            }
+        });
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '© OpenStreetMap contributors'
+    }).addTo(map);
+    // Add markers for all places
+    var places = {{ places|tojson }};
+    places.forEach(function(place) {
+        if (place.location) {
+            fetch('https://nominatim.openstreetmap.org/search?format=json&q=' + encodeURIComponent(place.location))
+                .then(response => response.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        var lat = parseFloat(data[0].lat);
+                        var lon = parseFloat(data[0].lon);
+                        L.marker([lat, lon]).addTo(map)
+                            .bindPopup('<b>' + place.name + '</b><br>' + place.location);
+                    }
+                });
+        }
+    });
+    // Add search control
+    L.Control.geocoder().addTo(map);
+</script>
+</body>
+</html> 

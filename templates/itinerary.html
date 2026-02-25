@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Itinerary PDF</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 30px; }
+        h1, h2, h3, h4 { color: #2c3e50; }
+        .day-section { margin-bottom: 40px; border-bottom: 1px solid #ccc; padding-bottom: 20px; }
+        .section-title { margin-top: 20px; margin-bottom: 10px; color: #4a90e2; }
+        .place-row { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 10px; }
+        .place-card { border: 1px solid #eee; border-radius: 8px; padding: 10px; width: 220px; background: #fafbfc; }
+        .place-img { width: 100%; height: 120px; object-fit: cover; border-radius: 6px; }
+        .place-title { font-weight: bold; margin-top: 8px; font-size: 1.05em; }
+        .place-rating { color: #e67e22; font-weight: bold; font-size: 0.95em; }
+    </style>
+</head>
+
+<body>
+    <h1>Travel Itinerary for {{ destination }}</h1>
+    <p><strong>Budget:</strong> {{ budget }}<br>
+    <strong>Days:</strong> {{ days }}</p>
+    {% for day in itinerary %}
+    <div class="day-section">
+        <h2>Day {{ day.day }}</h2>
+        <h3 class="section-title">Breakfast Hotels</h3>
+        <div class="place-row">
+            {% for hotel in day.breakfast_hotels %}
+            <div class="place-card">
+                <img src="{{ hotel.image_url }}" class="place-img">
+                <div class="place-title">{{ hotel.name }}</div>
+                <div class="place-rating">Rating: {{ hotel.rating }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <h3 class="section-title">Morning Attractions</h3>
+        <div class="place-row">
+            {% for attr in day.morning_attractions %}
+            <div class="place-card">
+                <img src="{{ attr.image_url }}" class="place-img">
+                <div class="place-title">{{ attr.name }}</div>
+                <div class="place-rating">Rating: {{ attr.rating }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <h3 class="section-title">Lunch Hotels</h3>
+        <div class="place-row">
+            {% for hotel in day.lunch_hotels %}
+            <div class="place-card">
+                <img src="{{ hotel.image_url }}" class="place-img">
+                <div class="place-title">{{ hotel.name }}</div>
+                <div class="place-rating">Rating: {{ hotel.rating }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <h3 class="section-title">Afternoon Attractions</h3>
+        <div class="place-row">
+            {% for attr in day.afternoon_attractions %}
+            <div class="place-card">
+                <img src="{{ attr.image_url }}" class="place-img">
+                <div class="place-title">{{ attr.name }}</div>
+                <div class="place-rating">Rating: {{ attr.rating }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <h3 class="section-title">Dinner Hotels</h3>
+        <div class="place-row">
+            {% for hotel in day.dinner_hotels %}
+            <div class="place-card">
+                <img src="{{ hotel.image_url }}" class="place-img">
+                <div class="place-title">{{ hotel.name }}</div>
+                <div class="place-rating">Rating: {{ hotel.rating }}</div>
+            </div>
+            {% endfor %}
+        </div>
+        <h3 class="section-title">Accommodation Hotels</h3>
+        <div class="place-row">
+            {% for hotel in day.accommodation_hotels %}
+            <div class="place-card">
+                <img src="{{ hotel.image_url }}" class="place-img">
+                <div class="place-title">{{ hotel.name }}</div>
+                <div class="place-rating">Rating: {{ hotel.rating }}</div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+    {% endfor %}
+</body>
+</html> 
